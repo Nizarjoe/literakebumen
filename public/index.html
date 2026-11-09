@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteraKebumen — Ruang Baca & Arsip Literasi Kebumen</title>
+<meta name="description" content="Ruang baca digital dan arsip publik karya tulis serta review kegiatan literasi kolektif di Kebumen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo" data-nav>Litera<span>Kebumen</span></a>
+    <nav class="main-nav" id="mainNav">
+      <a href="/karya-tulis" data-nav>Karya Tulis</a>
+      <a href="/review-acara" data-nav>Review Acara</a>
+      <a href="/arsip" data-nav>Arsip</a>
+      <a href="/tentang" data-nav>Tentang</a>
+    </nav>
+    <div class="header-actions">
+      <a href="/cari" class="search-btn" aria-label="Cari" data-nav>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-label="Buka menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+
+<main id="app" class="container"></main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <div class="logo footer-logo">Litera<span>Kebumen</span></div>
+      <p class="footer-desc">Ruang baca dan arsip kolektif literasi Kebumen. Merawat ingatan, menjaga gagasan.</p>
+    </div>
+    <nav class="footer-nav">
+      <a href="/karya-tulis" data-nav>Karya Tulis</a>
+      <a href="/review-acara" data-nav>Review Acara</a>
+      <a href="/arsip" data-nav>Arsip</a>
+      <a href="/tentang" data-nav>Tentang</a>
+    </nav>
+    <div class="footer-copy">© 2026 LiteraKebumen · Arsip publik komunitas literasi</div>
+  </div>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="/app.js"></script>
+</body>
+</html>

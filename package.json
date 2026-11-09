@@ -1,0 +1,20 @@
+{
+  "name": "literakebumen",
+  "version": "1.0.0",
+  "description": "Ruang baca digital dan arsip publik literasi Kebumen",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "prod": "NODE_ENV=production node server.js",
+    "backup": "bash backup.sh"
+  },
+  "keywords": ["cms", "archive", "literacy", "indonesia", "kebumen", "sqlite", "express"],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.22.3",
+    "multer": "^1.4.5-lts.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
