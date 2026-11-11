@@ -14,7 +14,11 @@ async function api(path, opts = {}) {
     headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
     ...opts,
   });
-  if (res.status === 401) { showLogin(); throw new Error("Sesi berakhir. Silakan login kembali."); }
+  if (res.status === 401) {
+    localStorage.removeItem("lit_token"); token = ""; user = null;
+    showLogin(); toast("Sesi berakhir. Silakan login kembali.");
+    throw new Error("Sesi berakhir. Silakan login kembali.");
+  }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "Terjadi kesalahan.");
   return data;
@@ -472,11 +476,17 @@ const adminRoutes = {
   pengguna: pgUsers,
 };
 function route() {
+  if (!user) { if (token === "") showLogin(); return; }
   const h = location.hash.replace(/^#\//, "") || "dashboard";
   const [pathPart] = h.split("?");
   const [name, arg] = pathPart.split("/");
   const navMap = { dashboard: "Dashboard", konten: "Semua Konten", kategori: "Kategori", media: "Media Library", aktivitas: "Activity Log", pengguna: "Pengguna" };
-  $$("#sbNav a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#/" + name || (name === "editor" && a.getAttribute("href")?.startsWith("#/konten"))));
+  const curHash = location.hash || "#/dashboard";
+  $$("#sbNav a").forEach((a) => {
+    const href = a.getAttribute("href") || "";
+    const on = href === curHash || (name === "editor" && href.startsWith("#/konten"));
+    a.classList.toggle("on", on);
+  });
   if (name === "editor") {
     if (arg && /^\d+$/.test(arg)) pgEditor(arg).catch((e) => toast(e.message));
     else pgEditor(arg || "karya").catch((e) => toast(e.message));
@@ -485,7 +495,7 @@ function route() {
   } else pgDashboard();
   window.scrollTo(0, 0);
 }
-window.addEventListener("hashchange", () => { if (user) route(); });
+window.addEventListener("hashchange", () => { if (user) route(); else if (token === "") showLogin(); });
 document.addEventListener("click", (e) => {
   const a = e.target.closest('a[href^="#/"]');
   if (a && user) { e.preventDefault(); if (location.hash !== a.getAttribute("href")) location.hash = a.getAttribute("href"); route(); }
@@ -494,7 +504,11 @@ document.addEventListener("click", (e) => {
 /* ---------- init ---------- */
 (async () => {
   if (token) {
-    try { const me = await api("/auth/me"); if (me.user) { user = me.user; boot(); return; } } catch {}
+    try {
+      const me = await api("/auth/me");
+      if (me.user) { user = me.user; boot(); return; }
+    } catch {}
+    localStorage.removeItem("lit_token"); token = ""; user = null;
   }
   showLogin();
 })();
