@@ -371,7 +371,14 @@ async function pgMedia() {
     <div class="drop" id="drop">Seret &amp; letakkan gambar di sini, atau <a href="#" id="pickFile">pilih file</a><br><span class="muted">PNG/JPG/WebP/GIF · maks 5 MB</span></div>
     <input type="file" id="medFile" accept="image/*" style="display:none">
   </div>
-  <div class="med-grid">${meds.map((m) => `<div><img src="${esc(m.url)}" alt="${esc(m.alt_text || m.file_name)}" title="${esc(m.file_name)}"><div class="muted" style="margin-top:6px">${esc(m.file_name.slice(0, 24))}<br>${(m.file_size / 1024).toFixed(0)} KB · ${fmtDate(m.created_at)}</div></div>`).join("") || '<p class="muted">Belum ada media.</p>'}</div>`;
+  <div class="med-grid">${meds.map((m) => `<div><img src="${esc(m.url)}" alt="${esc(m.alt_text || m.file_name)}" title="${esc(m.file_name)}"><div class="muted" style="margin-top:6px">${esc(m.file_name.slice(0, 24))}<br>${(m.file_size / 1024).toFixed(0)} KB · ${fmtDate(m.created_at)}<br><button type="button" class="btn btn-sm btn-danger" style="margin-top:6px" data-delmed="${m.id}">Hapus</button></div></div>`).join("") || '<p class="muted">Belum ada media.</p>'}</div>`;
+  view.addEventListener("click", async (e) => {
+    const b = e.target.closest("button[data-delmed]");
+    if (!b) return;
+    if (!confirm("Hapus gambar ini dari media library?")) return;
+    try { await api("/media/" + b.dataset.delmed, { method: "DELETE" }); toast("Media dihapus."); route(); }
+    catch (ex) { toast(ex.message); }
+  }, { once: true });
   const drop = $("#drop"), file = $("#medFile");
   const upload = async (f) => {
     if (!f) return;

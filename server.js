@@ -232,6 +232,16 @@ app.post("/api/media", requireAuth(), upload.single("file"), (req, res) => {
 app.get("/api/media", requireAuth(), (req, res) => {
   res.json(db.prepare("SELECT * FROM media ORDER BY id DESC LIMIT 200").all());
 });
+app.delete("/api/media/:id", requireAuth("admin"), (req, res) => {
+  const m = db.prepare("SELECT * FROM media WHERE id=?").get(req.params.id);
+  if (!m) return res.status(404).json({ error: "Media tidak ditemukan." });
+  const used = db.prepare("SELECT COUNT(*) n FROM contents WHERE cover_url=? OR body LIKE ?").get(m.url, `%${m.url}%`).n;
+  if (used > 0) return res.status(409).json({ error: `Gambar masih dipakai ${used} konten. Copot dulu dari konten.` });
+  db.prepare("DELETE FROM media WHERE id=?").run(m.id);
+  try { const fp = path.join(__dirname, "public", m.url.replace(/^\/+/, "")); if (fs.existsSync(fp)) fs.unlinkSync(fp); } catch (e) {}
+  log(req.user.name, "delete_media", "media", m.id, m.file_name);
+  res.json({ ok: true });
+});
 
 /* ================= contents ================= */
 const PUBLIC_FIELDS = `id,type,title,slug,excerpt,author_name,cover_url,status,published_at,created_at,updated_at,event_name,event_date,organizer,event_location,category_id,
