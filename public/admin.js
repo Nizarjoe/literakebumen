@@ -455,6 +455,13 @@ async function pgUsers() {
   }, { once: true });
 }
 
+/* ---------- mobile drawer ---------- */
+const drawer = $("#mobDrawer"), backdrop = $("#mobBackdrop");
+function drawerClose() { if (!drawer) return; drawer.classList.remove("open"); drawer.style.left = ""; backdrop?.classList.remove("show"); }
+$("#mobBurger")?.addEventListener("click", () => { if (!drawer) return; drawer.classList.add("open"); drawer.style.left = "0"; backdrop.classList.add("show"); });
+backdrop?.addEventListener("click", drawerClose);
+document.addEventListener("click", (e) => { if (e.target.closest("#mobDrawer a")) drawerClose(); });
+
 /* ---------- router ---------- */
 const adminRoutes = {
   dashboard: pgDashboard,
@@ -466,7 +473,8 @@ const adminRoutes = {
 };
 function route() {
   const h = location.hash.replace(/^#\//, "") || "dashboard";
-  const [name, arg] = h.split("/");
+  const [pathPart] = h.split("?");
+  const [name, arg] = pathPart.split("/");
   const navMap = { dashboard: "Dashboard", konten: "Semua Konten", kategori: "Kategori", media: "Media Library", aktivitas: "Activity Log", pengguna: "Pengguna" };
   $$("#sbNav a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#/" + name || (name === "editor" && a.getAttribute("href")?.startsWith("#/konten"))));
   if (name === "editor") {
@@ -480,7 +488,7 @@ function route() {
 window.addEventListener("hashchange", () => { if (user) route(); });
 document.addEventListener("click", (e) => {
   const a = e.target.closest('a[href^="#/"]');
-  if (a && user) e.preventDefault(), route();
+  if (a && user) { e.preventDefault(); if (location.hash !== a.getAttribute("href")) location.hash = a.getAttribute("href"); route(); }
 });
 
 /* ---------- init ---------- */
